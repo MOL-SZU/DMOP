@@ -19,7 +19,7 @@ The benchmark can be configured through the following parameters:
 - `taut`: number of generations per stage
 - `SeqString`: sequence of active objective subsets
 - `ObjConfig`: mapping between objective indices and benchmark types
-- `FrozenStr`: stage-wise specification of frozen decision variables :contentReference
+- `FrozenStr`: stage-wise specification of frozen decision variables 
 
 ## Usage
 
