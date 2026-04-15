@@ -1,30 +1,49 @@
 # D_MIXED_SEQ
 
-`D_MIXED_SEQ` is a dynamic many-objective optimization benchmark for evaluating evolutionary algorithms in changing environments. It supports stage-wise objective switching, where different subsets of objectives become active over time. 
+## Introduction
 
-The benchmark combines standard **DTLZ** and **WFG** formulations and also allows selected decision variables to be frozen at different stages. This provides a flexible testbed for studying the adaptability and robustness of dynamic multi-objective and many-objective optimization algorithms.
+`D_MIXED_SEQ` is a dynamic many-objective optimization benchmark designed for evaluating evolutionary algorithms in changing environments. It supports stage-wise switching of active objective subsets, allowing different objectives to become active at different stages of the optimization process.
+
+The benchmark integrates standard **DTLZ** and **WFG** formulations and also supports stage-dependent freezing of selected decision variables. This makes it a flexible testbed for studying the adaptability, robustness, and tracking ability of dynamic multi-objective and many-objective optimization algorithms. 
 
 ## Features
 
-- Dynamic switching of active objective subsets across optimization stages
-- Support for mixed benchmark construction using **DTLZ** and **WFG**
-- Stage-dependent freezing of selected decision variables
-- Built-in objective evaluation, optimum generation, and visualization
-- Suitable for dynamic multi-objective and many-objective optimization studies 
+- Stage-wise switching of active objective subsets
+- Mixed benchmark construction based on **DTLZ** and **WFG**
+- Optional freezing of selected decision variables at different stages
+- Built-in objective evaluation, reference front generation, and visualization
+- MHV-based performance evaluation for dynamic optimization experiments 
 
-## Configuration
+## Code Structure
 
-The benchmark can be configured through the following parameters:
+### 1. `D_MIXED_SEQ`
 
-- `taut`: number of generations per stage
-- `SeqString`: sequence of active objective subsets
-- `ObjConfig`: mapping between objective indices and benchmark types
-- `FrozenStr`: stage-wise specification of frozen decision variables 
+`D_MIXED_SEQ` defines the dynamic benchmark problem used in this project. It controls the active objective subsets at each stage, the mapping between objective indices and problem types, the frozen decision variables, and the objective evaluation process based on DTLZ/WFG formulations.
+
+It also provides functions for dynamic stage switching, objective calculation, optimum generation through `GetOptimum`, and visualization through `DrawObj`. 
+
+### 2. `MHV_Strict`
+
+`MHV_Strict` is the performance indicator used in this project. It computes:
+- `HV_Pop`: the hypervolume of the current population
+- `HV_PF`: the hypervolume of the reference Pareto front
+- `score`: the ratio `HV_Pop / HV_PF`, used as the final MHV value. 
+
+The function first extracts objective values from the population and the reference Pareto front, normalizes them, and then computes hypervolume using exact calculation in 2D, exact calculation in small-scale 3D cases, and Monte Carlo estimation in higher dimensions. 
+
+### 3. `RunExperiments_WithMHV`
+
+`RunExperiments_WithMHV` is the main experiment script. It defines the population size, number of runs, and stage lengths, constructs benchmark settings, runs multiple algorithms, records the MHV value at the last generation of each stage, and saves the results into `.mat` files.
+
+The current script evaluates the following algorithms:
+- `DTAEA`
+- `KTDMOEA`
+- `LEC`
+- `STA`
 
 ## Usage
 
-`D_MIXED_SEQ` is implemented as a problem class and can be used within the optimization framework as a dynamic test problem. During evolution, the benchmark updates the active objective set according to the current stage and evaluates solutions based on the corresponding DTLZ or WFG formulation. 
+Run the following script in MATLAB:
 
-## Purpose
-
-This benchmark is designed to help researchers study how optimization algorithms respond to nonstationary environments, especially in terms of convergence, diversity maintenance, robustness, and tracking ability. 
+```matlab
+RunExperiments_WithMHV
