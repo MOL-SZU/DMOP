@@ -14,8 +14,8 @@ function RunExperiments_WithMHV
     Runs = 31;
     Taus = [25, 50, 100];
 
-    AlgoList  = {@DTAEA, @KTDMOEA, @LEC, @STA, @ArchiveSPEA2SDE};
-    AlgoNames = {'DTAEA', 'KTDMOEA', 'LEC', 'STA', 'ArchiveSPEA2SDE'};
+    AlgoList  = {@DTAEA, @KTDMOEA, @LEC, @STA};
+    AlgoNames = {'DTAEA', 'KTDMOEA', 'LEC', 'STA'};
 
     % =========================================================================
     % 2. 实验设置
