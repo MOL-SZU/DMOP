@@ -47,3 +47,6 @@ Run the following script in MATLAB:
 
 ```matlab
 RunExperiments_WithMHV
+
+## Notes
+This project is implemented based on the PlatEMO framework. Please make sure the required algorithms and utility functions are available in the MATLAB path before running the experiments. 
