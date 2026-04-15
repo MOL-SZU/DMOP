@@ -1,49 +1,79 @@
-# D_MIXED_SEQ
+# Scalable DMO-CNO Benchmark (PlatEMO-based)
 
-## Introduction
+This repository contains the code accompanying the paper:
 
-`D_MIXED_SEQ` is a dynamic many-objective optimization benchmark designed for evaluating evolutionary algorithms in changing environments. It supports stage-wise switching of active objective subsets, allowing different objectives to become active at different stages of the optimization process.
+**“A Scalable Benchmark Test Suite for Dynamic Multi-Objective Optimization with a Changing Number of Objectives.”**
 
-The benchmark integrates standard **DTLZ** and **WFG** formulations and also supports stage-dependent freezing of selected decision variables. This makes it a flexible testbed for studying the adaptability, robustness, and tracking ability of dynamic multi-objective and many-objective optimization algorithms. 
+The implementation is **based on PlatEMO** and focuses on **dynamic multi-objective optimization with a changing number of objectives (DMO-CNO)**.
 
-## Features
+## Background
 
-- Stage-wise switching of active objective subsets
-- Mixed benchmark construction based on **DTLZ** and **WFG**
-- Optional freezing of selected decision variables at different stages
-- Built-in objective evaluation, reference front generation, and visualization
-- MHV-based performance evaluation for dynamic optimization experiments 
+Existing DMO-CNO benchmarks often replace a static objective count `m` with a time-varying `m(t)` directly inside DTLZ/WFG formulations. Because those formulations themselves depend on `m`, this unintentionally changes objective definitions over time.
 
-## Code Structure
+This repository implements the paper’s key idea:
 
-### 1. `D_MIXED_SEQ`
+- Define a problem with a fixed maximum objective set.
+- At each time step, activate only a subset of objectives.
+- Keep objective functions themselves unchanged while only changing the active objective subset.
 
-`D_MIXED_SEQ` defines the dynamic benchmark problem used in this project. It controls the active objective subsets at each stage, the mapping between objective indices and problem types, the frozen decision variables, and the objective evaluation process based on DTLZ/WFG formulations.
+To avoid degeneracy issues from classical formulations, this benchmark uses **Minus-DTLZ** and **Minus-WFG** style objectives (all objectives mutually conflicting).
 
-It also provides functions for dynamic stage switching, objective calculation, optimum generation through `GetOptimum`. 
+## What is implemented
 
-### 2. `MHV_Strict`
+### 1) Dynamic benchmark problem: `D_MIXED_SEQ.m`
 
-`MHV_Strict` is the performance indicator used in this project. It computes:
-- `HV_Pop`: the hypervolume of the current population
-- `HV_PF`: the hypervolume of the reference Pareto front
-- `score`: the ratio `HV_Pop / HV_PF`, used as the final MHV value. 
+`D_MIXED_SEQ` implements a stage-wise dynamic benchmark in which:
 
-The function first extracts objective values from the population and the reference Pareto front, normalizes them, and then computes hypervolume using exact calculation in 2D, exact calculation in small-scale 3D cases, and Monte Carlo estimation in higher dimensions. 
+- a maximum objective pool is defined,
+- active objective indices switch according to predefined stage sequences,
+- environment changes occur at fixed frequencies,
+- objective values are evaluated from DTLZ/WFG-style base constructions.
 
-### 3. `RunExperiments_WithMHV`
+This realizes the paper’s “fixed objectives + dynamic active subset” benchmark design.
 
-`RunExperiments_WithMHV` is the main experiment script. It defines the population size, number of runs, and stage lengths, constructs benchmark settings, runs multiple algorithms, records the MHV value at the last generation of each stage, and saves the results into `.mat` files.
+### 2) Performance metric: `MHV_Strict.m`
 
-The current script evaluates the following algorithms:
+`MHV_Strict` computes a normalized hypervolume score for each stage:
+
+- `HV_Pop`: hypervolume of algorithm population,
+- `HV_PF`: hypervolume of reference Pareto front,
+- `score = HV_Pop / HV_PF`.
+
+This follows the paper’s motivation of making performance values comparable under different objective dimensions.
+
+### 3) Experiment driver: `RunExperiments_WithMHV.m`
+
+`RunExperiments_WithMHV` runs repeated experiments and records stage-wise results.
+
+The included algorithms are:
+
 - `DTAEA`
 - `KTDMOEA`
 - `LEC`
 - `STA`
 
+Algorithm implementations are under `Algorithms/` and are integrated in a PlatEMO-style workflow.
+
+## Repository structure
+
+- `D_MIXED_SEQ.m` – dynamic benchmark definition.
+- `MHV_Strict.m` – MHV computation.
+- `RunExperiments_WithMHV.m` – experiment script.
+- `Algorithms/` – compared algorithms used in the paper.
+
 ## Usage
 
-Run the following script in MATLAB:
+1. Prepare a MATLAB environment with the required **PlatEMO** base available.
+2. Open MATLAB in this repository root.
+3. Run:
 
 ```matlab
 RunExperiments_WithMHV
+```
+
+Results are saved to `.mat` files as configured in the script.
+
+## Notes
+
+- This repo is an experimental research codebase built on PlatEMO conventions.
+- Parameter settings (population size, frequency of change, number of runs, and objective-index sequences) should be configured in `RunExperiments_WithMHV.m` to reproduce specific paper settings.
