@@ -20,7 +20,7 @@ The benchmark integrates standard **DTLZ** and **WFG** formulations and also sup
 
 `D_MIXED_SEQ` defines the dynamic benchmark problem used in this project. It controls the active objective subsets at each stage, the mapping between objective indices and problem types, the frozen decision variables, and the objective evaluation process based on DTLZ/WFG formulations.
 
-It also provides functions for dynamic stage switching, objective calculation, optimum generation through `GetOptimum`, and visualization through `DrawObj`. 
+It also provides functions for dynamic stage switching, objective calculation, optimum generation through `GetOptimum`. 
 
 ### 2. `MHV_Strict`
 
